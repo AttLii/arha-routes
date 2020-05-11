@@ -38,10 +38,10 @@ class ArhaHelpers {
   }
 
   /**
-   * Function checks if $orderby param is accepted to be get_posts() arguments
+   * Function checks if passed in string is accepted orderby-argument for new WP_Query
    *
    * @param String $orderby
-   * @see https://codex.wordpress.org/Template_Tags/get_posts
+   * @see https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters
    */
   public static function check_orderby_param(String $orderby) {
     $orderby_values = [
@@ -49,15 +49,20 @@ class ArhaHelpers {
       'ID',
       'author',
       'title',
+      'name',
+      'type',
       'date',
       'modified',
       'parent',
       'rand',
       'comment_count',
+      'relevance',
       'menu_order',
       'meta_value',
       'meta_value_num',
       'post__in',
+      'post_name__in',
+      'post_parent__in'
     ];
     if (!in_array($orderby, $orderby_values)) {
       throw new Exception("orderby-param is not acceptable");
