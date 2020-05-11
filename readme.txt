@@ -82,6 +82,22 @@ function format_options($options) {
 }
 ```
 
+- By default Arha Routes returns only published content with post-, page- and archive-route, this can be modified by adding following filters.
+```
+// for archive route
+add_filter('arha_routes/allowed_post_statuses_archive', 'allowed_post_statuses');
+// for post route
+add_filter('arha_routes/allowed_post_statuses_post', 'allowed_post_statuses');
+// for page route
+add_filter('arha_routes/allowed_post_statuses_page', 'allowed_post_statuses');
+function allowed_post_statuses($post_statuses) {
+  // ... change post_statuses array
+
+  return $post_statuses;
+}
+```
+After adding setting up these filters, request can include "post_status" parameter and it will be compared to $post_statuses array.
+
 ## SearchWP
 
 Arha Routes supports SearchWP-plugin, which lets WP users to make keyword search engine for their content.

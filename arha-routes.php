@@ -76,6 +76,14 @@ class ArhaRoutes {
         'post_type' => $post_type,
       ];
 
+      $post_status = $request->get_param('post_status');
+      if ($post_status) {
+        $allowed_additional_post_status = apply_filters('arha_routes/allowed_post_statuses_post', []);
+        if (in_array($post_status, $allowed_additional_post_status)) {
+          $args['post_status'] = $post_status;
+        }
+      }
+
       $lang;
       if (class_exists('Polylang')) {
         $lang = $request->get_param('lang');
@@ -124,22 +132,32 @@ class ArhaRoutes {
         ArhaHelpers::set_polylang_curlang($lang);
       }
 
+      $args = [
+        'post_type' => 'page'
+      ];
+
+      $post_status = $request->get_param('post_status');
+      if ($post_status) {
+        $post_statuses = apply_filters('arha_routes/allowed_post_statuses_page', []);
+        if (in_array($post_status, $post_statuses)) {
+          $args['post_status'] = $post_status;
+        }
+      }
+      
       if ($path === '/') {
         $page = ArhaHelpers::get_front_page();
-      } else {
-        $args = [
-          'post_type' => 'page',
-          'path'      => $path,
-        ];
-
-        if (class_exists('Polylang')) {
-          $args['lang'] = $lang;
-        }
-        $page = ArhaHelpers::get_post($args);
+        $path = $page->post_name;
       }
 
+      $args['path'] = $path;
+
+      if (class_exists('Polylang')) {
+        $args['lang'] = $lang;
+      }
+
+      $page = ArhaHelpers::get_post($args);
       if (!$page) {
-        throw new Exception("Didn't find page with path '${path}'");
+        throw new Exception("Didn't find page with path '$path'");
       }
 
       $content = apply_filters('arha_routes/format_page', $page);
@@ -223,7 +241,18 @@ class ArhaRoutes {
         throw new Exception('Order param can only be ASC or DESC');
       }
 
-      $status = in_array('attachment', $post_types) ? 'inherit' : 'publish';
+      $status = "";
+      $post_status_param = $request->get_param('post_status');
+      if ($post_status_param) {
+        $post_statuses = apply_filters('arha_routes/allowed_post_statuses_archive', []);
+        if (in_array($post_status_param, $post_statuses)) {
+          $status = $post_status_param;
+        }
+      }
+      if ($status === "") {
+        $status = in_array('attachment', $post_types) ? 'inherit' : 'publish';
+      }
+
 
       $args = [
         'post_type'      => $post_types,
