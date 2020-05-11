@@ -2,7 +2,7 @@
 /*
 Plugin Name: Arha Routes
 Description: Adds REST endpoints for Headless setup
-Version: 1.3
+Version: 1.4
 Author: Atte Liimatainen
  */
 
